@@ -1,7 +1,7 @@
 # medical_ml_project
 Machine Learning Project in Medical Domain
 
-Live running app: https://medico-bhv2.onrender.com/
+Live running app: https://betterdoctor.onrender.com
 
 Pushing to this repo, will automatically redeploy the live app.
 
