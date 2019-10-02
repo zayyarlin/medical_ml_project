@@ -3,13 +3,21 @@
 from scripts import tabledef
 from scripts import forms
 from scripts import helpers
-from flask import Flask, redirect, url_for, render_template, request, session
+from flask import Flask, redirect, url_for, render_template, request, session, jsonify
 import json
 import sys
 import os
+import stripe
 
 app = Flask(__name__)
 app.secret_key = os.urandom(12)  # Generic key for dev purposes only
+
+stripe_keys = {
+  'secret_key': os.environ['STRIPE_SECRET_KEY'],
+  'publishable_key': os.environ['STRIPE_PUBLISHABLE_KEY']
+}
+
+stripe.api_key = stripe_keys['secret_key']
 
 # Heroku
 #from flask_heroku import Heroku
@@ -78,6 +86,38 @@ def settings():
         return render_template('settings.html', user=user)
     return redirect(url_for('login'))
 
+
+@app.route('/payment')
+def payment():
+    if session.get('logged_in'):
+        return render_template('payment.html', key=stripe_keys['publishable_key'])
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route('/charge', methods=['POST'])
+def charge():
+    if session.get('logged_in'):
+        user = helpers.get_user()
+        try:
+            amount = 2000   # amount in cents
+            customer = stripe.Customer.create(
+                email=user.email,
+                source=request.form['stripeToken']
+            )
+            stripe.Charge.create(
+                customer=customer.id,
+                amount=amount,
+                currency='usd',
+                description='Better Doctor Charge'
+            )
+            
+            helpers.change_user(paid=True)
+            return render_template('charge.html', amount=amount)
+        except stripe.error.StripeError:
+            return render_template('error.html')
+    else:
+        return redirect(url_for('login'))
 
 # ======== Main ============================================================== #
 if __name__ == "__main__":

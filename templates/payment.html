@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block body %}
+{% include "navbar.html" %}
+<title>BetterDoctor</title>
+<section class="hero is-primary is-bold is-small">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <div id="payment" class="payment-box">
+        <div class="payment-area">    
+          <h1>Payment</h1>
+          <form action="/charge" method="post">
+            <script
+              src="https://checkout.stripe.com/checkout.js"
+              class="stripe-button"
+              data-key="{{ key }}"
+              data-description="Better Doctor Charge"
+              data-amount="2000"
+              data-locale="auto">
+            </script>
+          </form>
+        </div>
+      </div>    
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="../static/js/scripts.js"></script>
+{% endblock %}

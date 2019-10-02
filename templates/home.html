@@ -2,7 +2,19 @@
 {% block body %}
 {% include "navbar.html" %}
 <section class="hero is-primary is-bold is-large">
-  <div class="hero-body"></div>
+  <div class="hero-body">
+    Hello! {{ user.username }}
+
+    {% if user.paid %}
+      <p> You are a paid user.</p>
+    {% endif %}
+
+    {% if not user.paid %}
+      <p>Purchase access plan</p>
+      <a href="/payment" class="button">Purchase</a>
+    {% endif %}
+
+  </div>
 </section>
 {% endblock %}
 {% block scripts %}
