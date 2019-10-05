@@ -87,6 +87,7 @@ def settings():
     return redirect(url_for('login'))
 
 
+# -------- Payment with stripe ---------------------------------------------- #
 @app.route('/payment')
 def payment():
     if session.get('logged_in'):
@@ -111,11 +112,10 @@ def charge():
                 currency='usd',
                 description='Better Doctor Charge'
             )
-            
-            helpers.change_user(paid=True)
-            return render_template('charge.html', amount=amount)
         except stripe.error.StripeError:
             return render_template('error.html')
+        helpers.change_user(paid=True)
+        return render_template('charge.html', amount=amount)
     else:
         return redirect(url_for('login'))
 
