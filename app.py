@@ -8,8 +8,10 @@ import json
 import sys
 import os
 import stripe
+import pickle
 
 app = Flask(__name__)
+# model = pickle.load(open('model.pkl','rb'))
 app.secret_key = os.urandom(12)  # Generic key for dev purposes only
 
 stripe_keys = {
@@ -36,6 +38,7 @@ def login():
                 if helpers.credentials_valid(username, password):
                     session['logged_in'] = True
                     session['username'] = username
+                    session['password'] = password
                     return json.dumps({'status': 'Login successful'})
                 return json.dumps({'status': 'Invalid user/pass'})
             return json.dumps({'status': 'Both fields required'})
@@ -47,6 +50,8 @@ def login():
 @app.route("/logout")
 def logout():
     session['logged_in'] = False
+    session['username'] = ""
+    session['password'] = ""
     return redirect(url_for('login'))
 
 
@@ -64,6 +69,7 @@ def signup():
                     helpers.add_user(username, password, email)
                     session['logged_in'] = True
                     session['username'] = username
+                    session['password'] = password
                     return json.dumps({'status': 'Signup successful'})
                 return json.dumps({'status': 'Username taken'})
             return json.dumps({'status': 'User/Pass required'})
@@ -81,6 +87,7 @@ def settings():
                 password = helpers.hash_password(password)
             email = request.form['email']
             helpers.change_user(password=password, email=email)
+            session['password'] = password
             return json.dumps({'status': 'Saved'})
         user = helpers.get_user()
         return render_template('settings.html', user=user)
@@ -122,6 +129,25 @@ def charge():
 
 # -------- Chat Main Page ---------------------------------------------- #
 # TODO
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.get_json(force=True)
+    if helpers.credentials_valid_paid(data['username'], data['password']) or int(data['patient'])<2:
+        print(data)
+        # prediction = model.predict(data['message'])
+        # output = prediction[0]
+        # return jsonify(output)
+        return jsonify({"message": f"You said {data['message']}"})
+    else:
+        return jsonify({"message": "You need to pay to use this"})
+
+@app.route('/patient/<number>', methods=['GET'])
+def patient(number):
+    if session.get("logged_in"):
+        return render_template('chat.html', id=number, username = session['username'], password = session['password']  )
+    else:
+        return redirect(url_for("login"))
 
 # ======== Main ============================================================== #
 if __name__ == "__main__":

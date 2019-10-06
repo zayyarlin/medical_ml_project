@@ -1,10 +1,103 @@
 {% extends "base.html" %}
 {% block body %}
 {% include "navbar.html" %}
+<style>
+.bot-list {
+  display: flex;
+  flex-direction: column;
+  width: 75%;
+  margin: 2%;
+  padding: 1%;
+}
+.left-right{
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+.custom-card {
+  background-color: #0f7;
+  flex: 1;
+  text-align: center;
+  font-size: 2rem;
+  margin: 1%;
+}
+.custom-rows {
+  display: flex;
+  flex: 1;
+}
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+</style>
 <section class="hero is-primary is-bold is-large">
   <div class="hero-body">
-    
+    {% if user.paid %}
+      <div class="left-right">
+        <div>
+          <p> Hello! {{ user.username }}</p>
+          <p> You are a paid user.</p>
+        </div>
+        <div class="bot-list">
+          <div class="custom-rows">
+            <a href="/patient/0" class="custom-card">Alice</a>
+            <a href="/patient/1" class="custom-card">Bob</a>
+            <a href="/patient/2" class="custom-card">Chelsea</a>
+          </div>
+          <div class="custom-rows">
+            <a href="/patient/3" class="custom-card">Damien</a>
+            <a href="/patient/4" class="custom-card">Evelyn</a>
+            <a href="/patient/5" class="custom-card">Frank</a>
+          </div>
+        </div>
+      </div>
+    {% endif %}
 
+    {% if not user.paid %}<div class="left-right">
+      <div class="sidebar">
+        <p> Hello! {{ user.username }}</p>
+        <p>Purchase access plan</p>
+        <a href="/payment" class="button">Purchase</a>
+      </div>
+      <div class="bot-list">
+        <div class="custom-rows">
+          <a href="/patient/0" class="custom-card">Alice</a>
+          <a href="/patient/1" class="custom-card">Bob</a>
+          <a href="#" class="custom-card" 
+          onClick="(function(){
+            alert('You need to pay to chat with this bot');
+            return false;
+            })();return false;">
+            Chelsea
+          </a>
+        </div>
+        <div class="custom-rows">
+          <a href="#" class="custom-card"
+          onClick="(function(){
+            alert('You need to pay to chat with this bot');
+            return false;
+            })();return false;">
+            Damien
+          </a>
+          <a href="#" class="custom-card"
+            onClick="(function(){
+              alert('You need to pay to chat with this bot');
+              return false;
+              })();return false;">
+            Evelyn
+          </a>
+          <a href="#" class="custom-card"
+            onClick="(function(){
+              alert('You need to pay to chat with this bot');
+              return false;
+              })();return false;">
+            Frank
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}
