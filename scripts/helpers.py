@@ -58,7 +58,7 @@ def credentials_valid(username, password):
     with session_scope() as s:
         user = s.query(tabledef.User).filter(tabledef.User.username.in_([username])).first()
         if user:
-            return bcrypt.checkpw(password.encode('utf8'), user.password)
+            return bcrypt.checkpw(password.encode('utf8'), user.password.encode('utf8'))
         else:
             return False
 
@@ -66,7 +66,7 @@ def credentials_valid_paid(username, password):
     with session_scope() as s:
         user = s.query(tabledef.User).filter(tabledef.User.username.in_([username])).first()
         if user:
-            return bcrypt.checkpw(password.encode('utf8'), user.password) and user.paid
+            return bcrypt.checkpw(password.encode('utf8'), user.password.encode('utf8')) and user.paid
         else:
             return False
 

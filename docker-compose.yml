@@ -6,6 +6,8 @@ services:
     environment:
       PYTHONUNBUFFERED: 'true'
       PORT: 80
+      STRIPE_SECRET_KEY: ''
+      STRIPE_PUBLISHABLE_KEY: ''
     volumes:
       - '.:/app'
     ports:
