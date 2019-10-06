@@ -5,6 +5,7 @@ services:
     build: .
     environment:
       PYTHONUNBUFFERED: 'true'
+      PORT: 80
     volumes:
       - '.:/app'
     ports:

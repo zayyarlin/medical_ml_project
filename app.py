@@ -84,10 +84,10 @@ def settings():
         if request.method == 'POST':
             password = request.form['password']
             if password != "":
+                session['password'] = request.form['password']
                 password = helpers.hash_password(password)
             email = request.form['email']
             helpers.change_user(password=password, email=email)
-            session['password'] = password
             return json.dumps({'status': 'Saved'})
         user = helpers.get_user()
         return render_template('settings.html', user=user)
@@ -121,7 +121,7 @@ def charge():
                 description='Better Doctor Charge'
             )
         except stripe.error.StripeError:
-            return render_template('error.html')
+            return render_template('error.html',user=user)
         helpers.change_user(paid=True)
 
     # This is confusing at the moment because main page is routed by login
@@ -145,10 +145,11 @@ def chat():
 @app.route('/patient/<number>', methods=['GET'])
 def patient(number):
     if session.get("logged_in"):
-        return render_template('chat.html', id=number, username = session['username'], password = session['password']  )
+        user = helpers.get_user()
+        return render_template('chat.html', id=number, user=user,username = session['username'], password = session['password']  )
     else:
         return redirect(url_for("login"))
 
 # ======== Main ============================================================== #
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=True, port=80, host='0.0.0.0')
+    app.run(debug=True, use_reloader=True, port=os.environ["PORT"], host='0.0.0.0')
