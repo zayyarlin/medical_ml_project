@@ -94,10 +94,12 @@ def settings():
     return redirect(url_for('login'))
 
 
+# -------- Payment with stripe ---------------------------------------------- #
 @app.route('/payment')
 def payment():
     if session.get('logged_in'):
-        return render_template('payment.html', key=stripe_keys['publishable_key'])
+        user = helpers.get_user()
+        return render_template('payment.html', key=stripe_keys['publishable_key'], user=user)
     else:
         return redirect(url_for('login'))
 
@@ -118,13 +120,15 @@ def charge():
                 currency='usd',
                 description='Better Doctor Charge'
             )
-            
-            helpers.change_user(paid=True)
-            return render_template('charge.html', amount=amount)
         except stripe.error.StripeError:
             return render_template('error.html')
-    else:
-        return redirect(url_for('login'))
+        helpers.change_user(paid=True)
+
+    # This is confusing at the moment because main page is routed by login
+    return redirect(url_for('login'))
+
+# -------- Chat Main Page ---------------------------------------------- #
+# TODO
 
 @app.route('/chat', methods=['POST'])
 def chat():
