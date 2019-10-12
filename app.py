@@ -142,12 +142,12 @@ def chat():
         question  = content['message']
         patient = helpers.get_patient(int(patient_id))
         context = patient.case
-        res = requests.post(f'http://{{qa_svce_host}}:{{qa_svce_port}}/qa', json={"context":context, "question":question})
+        res = requests.post(f'http://{qa_svce_host}:{qa_svce_port}/qa', json={"context":context, "question":question})
 
         if res.ok:
             answer = res.json()["answer"]
             print(answer)
-            return jsonify({"message": f"{{answer}}"})
+            return jsonify({"message": f"{answer}"})
         else:
             return jsonify({"message": "Request failed"})
     else:
