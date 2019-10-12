@@ -5,251 +5,43 @@
   <div class="hero-body">
     <div class="container">
       <div class="columns bot-area">
+        {% for patient in patients %}
         <div class="column">
           <div class="card bot-card">
             <div class="card-image">
               <figure class="image">
-                <img src="/static/img/placeholder-female.jpg" alt="Alice Image">
+                {% if patient.gender == 'F' %}
+                <img src="/static/img/placeholder-female.jpg" alt="">
+                {% endif %}
+                {% if patient.gender == 'M' %}
+                <img src="/static/img/placeholder-male.jpg" alt="">
+                {% endif %}
               </figure>
             </div>
             <div class="card-content">
               <div class="content">
-                <p class="title">Alice</p>
+                <p class="title">{{ patient.name }}</p>
               </div>
               <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris.
+                {{ patient.case_type }}
               </div>
             </div>
             <footer class="card-footer ">
-              <a href="/patient/0" class="card-footer-item is-primary">Chat</a>
-            </footer>
-          </div>
-          <div class="card">
-            <div class="card-image">
-              <figure class="image">
-                <img src="/static/img/placeholder-male.jpg" alt="Damien Image">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <p class="title">Bob</p>
-              </div>
-              <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris.
-              </div>
-            </div>
-            <footer class="card-footer">
-              {% if user.paid %}
-              <a href="/patient/1" class="card-footer-item is-primary">Chat</a>
+              {% if patient.free %}
+              <a href="{{ '/patient/%s'%patient.id }}" class="card-footer-item is-primary">Chat</a>
               {% endif %}
-              {% if not user.paid %}
-              <p class="card-footer-item is-primary">Purchase access to chat</p>
+              {% if not patient.free %}
+                {% if user.paid %}
+                <a href="{{ '/patient/%s'%patient.id }}" class="card-footer-item is-primary">Chat</a>
+                {% endif %}
+                {% if not user.paid %}
+                <p class="card-footer-item is-primary">Purchase access to chat</p>
+                {% endif %}
               {% endif %}
             </footer>
           </div>
         </div>
-        <div class="column">
-          <div class="card bot-card">
-            <div class="card-image">
-              <figure class="image">
-                <img src="/static/img/placeholder-female.jpg" alt="Alice Image">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <p class="title">Chelsea</p>
-              </div>
-              <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris.
-              </div>
-            </div>
-            <footer class="card-footer">
-              {% if user.paid %}
-              <a href="/patient/2" class="card-footer-item is-primary">Chat</a>
-              {% endif %}
-              {% if not user.paid %}
-              <p class="card-footer-item is-primary">Purchase access to chat</p>
-              {% endif %}
-            </footer>
-          </div>
-          <div class="card">
-            <div class="card-image">
-              <figure class="image">
-                <img src="/static/img/placeholder-male.jpg" alt="Damien Image">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <p class="title">Damien</p>
-              </div>
-              <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris.
-              </div>
-            </div>
-            <footer class="card-footer">
-                {% if user.paid %}
-                <a href="/patient/3" class="card-footer-item is-primary">Chat</a>
-                {% endif %}
-                {% if not user.paid %}
-                <p class="card-footer-item is-primary">Purchase access to chat</p>
-                {% endif %}
-            </footer>
-          </div>
-        </div>
-        <div class="column">
-          <div class="card bot-card">
-            <div class="card-image">
-              <figure class="image">
-                <img src="/static/img/placeholder-female.jpg" alt="Alice Image">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <p class="title">Elaine</p>
-              </div>
-              <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris.
-              </div>
-            </div>
-            <footer class="card-footer">
-                {% if user.paid %}
-                <a href="/patient/4" class="card-footer-item is-primary">Chat</a>
-                {% endif %}
-                {% if not user.paid %}
-                <p class="card-footer-item is-primary">Purchase access to chat</p>
-                {% endif %}
-            </footer>
-          </div>
-          <div class="card">
-            <div class="card-image">
-              <figure class="image">
-                <img src="/static/img/placeholder-male.jpg" alt="Damien Image">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <p class="title">Fabio</p>
-              </div>
-              <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris.
-              </div>
-            </div>
-            <footer class="card-footer">
-                {% if user.paid %}
-                <a href="/patient/5" class="card-footer-item is-primary">Chat</a>
-                {% endif %}
-                {% if not user.paid %}
-                <p class="card-footer-item is-primary">Purchase access to chat</p>
-                {% endif %}
-            </footer>
-          </div>
-        </div>
-        <div class="column">
-          <div class="card bot-card">
-            <div class="card-image">
-              <figure class="image">
-                <img src="/static/img/placeholder-male.jpg" alt="Alice Image">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <p class="title">George</p>
-              </div>
-              <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris.
-              </div>
-            </div>
-            <footer class="card-footer">
-                {% if user.paid %}
-                <a href="/patient/6" class="card-footer-item is-primary">Chat</a>
-                {% endif %}
-                {% if not user.paid %}
-                <p class="card-footer-item is-primary">Purchase access to chat</p>
-                {% endif %}
-            </footer>
-          </div>
-          <div class="card">
-            <div class="card-image">
-              <figure class="image">
-                <img src="/static/img/placeholder-male.jpg" alt="Damien Image">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <p class="title">Harry</p>
-              </div>
-              <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris.
-              </div>
-            </div>
-            <footer class="card-footer">
-                {% if user.paid %}
-                <a href="/patient/7" class="card-footer-item is-primary">Chat</a>
-                {% endif %}
-                {% if not user.paid %}
-                <p class="card-footer-item is-primary">Purchase access to chat</p>
-                {% endif %}
-            </footer>
-          </div>
-        </div>
-        <div class="column">
-          <div class="card bot-card">
-            <div class="card-image">
-              <figure class="image">
-                <img src="/static/img/placeholder-female.jpg" alt="Alice Image">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <p class="title">Irene</p>
-              </div>
-              <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris.
-              </div>
-            </div>
-            <footer class="card-footer">
-                {% if user.paid %}
-                <a href="/patient/8" class="card-footer-item is-primary">Chat</a>
-                {% endif %}
-                {% if not user.paid %}
-                <p class="card-footer-item is-primary">Purchase access to chat</p>
-                {% endif %}
-            </footer>
-          </div>
-          <div class="card">
-            <div class="card-image">
-              <figure class="image">
-                <img src="/static/img/placeholder-male.jpg" alt="Damien Image">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <p class="title">John</p>
-              </div>
-              <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris.
-              </div>
-            </div>
-            <footer class="card-footer">
-                {% if user.paid %}
-                <a href="/patient/9" class="card-footer-item is-primary">Chat</a>
-                {% endif %}
-                {% if not user.paid %}
-                <p class="card-footer-item is-primary">Purchase access to chat</p>
-                {% endif %}
-            </footer>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </div>

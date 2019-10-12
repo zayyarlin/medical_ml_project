@@ -9,6 +9,7 @@ import sys
 import os
 import stripe
 import pickle
+import requests
 
 app = Flask(__name__)
 # model = pickle.load(open('model.pkl','rb'))
@@ -18,6 +19,9 @@ stripe_keys = {
   'secret_key': os.environ['STRIPE_SECRET_KEY'],
   'publishable_key': os.environ['STRIPE_PUBLISHABLE_KEY']
 }
+
+qa_svce_host = os.environ['QA_SVCE_HOST']
+qa_svce_port = os.environ['QA_SVCE_PORT']
 
 stripe.api_key = stripe_keys['secret_key']
 
@@ -44,7 +48,7 @@ def login():
             return json.dumps({'status': 'Both fields required'})
         return render_template('login.html', form=form)
     user = helpers.get_user()
-    return render_template('home.html', user=user)
+    return render_template('home.html', user=user, patients=helpers.get_patients())
 
 
 @app.route("/logout")
@@ -128,25 +132,36 @@ def charge():
     return redirect(url_for('login'))
 
 # -------- Chat Main Page ---------------------------------------------- #
-# TODO
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.get_json(force=True)
-    if helpers.credentials_valid_paid(data['username'], data['password']) or int(data['patient'])<2:
-        print(data)
-        # prediction = model.predict(data['message'])
-        # output = prediction[0]
-        # return jsonify(output)
-        return jsonify({"message": f"You said {data['message']}"})
-    else:
-        return jsonify({"message": "You need to pay to use this"})
-
-@app.route('/patient/<number>', methods=['GET'])
-def patient(number):
     if session.get("logged_in"):
         user = helpers.get_user()
-        return render_template('chat.html', id=number, user=user,username = session['username'], password = session['password']  )
+        content = request.json
+        patient_id = content['patient_id']
+        question  = content['message']
+        patient = helpers.get_patient(int(patient_id))
+        context = patient.case
+        res = requests.post(f'http://{{qa_svce_host}}:{{qa_svce_port}}/qa', json={"context":context, "question":question})
+
+        if res.ok:
+            answer = res.json()["answer"]
+            print(answer)
+            return jsonify({"message": f"{{answer}}"})
+        else:
+            return jsonify({"message": "Request failed"})
+    else:
+        return jsonify({"message": "Error authentication failed!"})
+
+@app.route('/patient/<patient_id>', methods=['GET'])
+def patient(patient_id):
+    if session.get("logged_in"):
+        user = helpers.get_user()
+        patient = helpers.get_patient(int(patient_id))
+        if patient.free or user.paid:
+            return render_template('chat.html', user=user, patient=patient)
+        else:
+            return render_template('home.html', user=user, patients=helpers.get_patients())
     else:
         return redirect(url_for("login"))
 

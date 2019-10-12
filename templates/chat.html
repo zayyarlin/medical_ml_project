@@ -2,118 +2,162 @@
 {% block body %}
 {% include "navbar.html" %}
 <style>
-/* Chat containers */
-.container {
-  border: 2px solid #dedede;
-  background-color: #f1f1f1;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 10px 0;
-}
+  /* Chat containers */
+  .chat-container {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+  }
 
-/* Darker chat container */
-.darker {
-  border-color: #ccc;
-  background-color: #ddd;
-}
+  /* Darker chat container */
+  .darker {
+    border-color: cyan;
+    background-color: cyan;
+  }
 
-/* Clear floats */
-.container::after {
-  content: "";
-  clear: both;
-  display: table;
-}
+  /* Clear floats */
+  .chat-container::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
 
-/* Style images */
-.container img {
-  float: left;
-  max-width: 60px;
-  width: 100%;
-  margin-right: 20px;
-  border-radius: 50%;
-}
+  /* Style images */
+  .chat-container img {
+    float: left;
+    max-width: 60px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+  }
 
-/* Style the right image */
-.container img.right {
-  float: right;
-  margin-left: 20px;
-  margin-right:0;
-}
+  /* Style the right image */
+  .container img.right {
+    float: right;
+    margin-left: 20px;
+    margin-right: 0;
+  }
 
-/* Style time text */
-.time-right {
-  float: right;
-  color: #aaa;
-}
+  /* Style time text */
+  .time-right {
+    float: right;
+    color: #aaa;
+  }
 
-/* Style time text */
-.time-left {
-  float: left;
-  color: #999;
-}
+  /* Style time text */
+  .time-left {
+    float: left;
+    color: #999;
+  }
 
-.chat-bubble {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-}
-.input-chat{
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-.input-text{
-  width:80%;
-}
-.bottombar {
-  margin-top: 5%;
-  height: 20%;
-  background-color: #aaa;
-  text-align: center;
-}
+  .chat-bubble {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .input-chat {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .input-text {
+    width: 80%;
+  }
+
+  .bottombar {
+    margin-top: 5%;
+    height: 20%;
+    background-color: #aaa;
+    text-align: center;
+  }
 </style>
-<div class="chat-bubble" id="chat">
-  <div class="container">
-    <img src="/static/img/index.jpeg" alt="Avatar">
-    <p>Hello. How are you today?</p>
-    <span class="time-right">11:00</span>
+<div class="container">
+  <h1 class="title">You are chatting with {{ patient.name }}</h1>
+  <div class="chat-bubble" id="chat">
+    <div class="chat-container">
+      <img src="/static/img/index.jpeg" alt="Avatar">
+      <p>Hello. How are you today?</p>
+      <span class="time-right">11:00</span>
+    </div>
+    <div class="chat-container darker">
+      <img src="/static/img/index.jpeg" alt="Avatar" class="right">
+      <p>Hey! I'm fine. Thanks for asking!</p>
+      <span class="time-left">11:01</span>
+    </div>
   </div>
-  
-  <div class="container darker">
-    <img src="/static/img/index.jpeg" alt="Avatar" class="right">
-    <p>Hey! I'm fine. Thanks for asking!</p>
-    <span class="time-left">11:01</span>
+  <div class="input-chat">
+    <input type="text" class="input-text" id="send-text">
+    <input type="hidden" id="hidden-bot" value="{{ patient.id }}">
+    <button id="send-button" class="button">send</button>
   </div>
-</div>
-<div class="input-chat">
-  <input type="text" class="input-text" id="send-text">
-  <input type="hidden" id="hidden-bot" value = "{{ id }}">
-  <button id="send-button">send</button>
-</div>
-<div class="bottombar">
-  <a href="/">back</a>
+  <div class="button">
+    <a href="/">back</a>
+  </div>
 </div>
 {% endblock %}
 {% block scripts %}
-<script src="../static/js/chat.js"></script>
 <script>
-  text.addEventListener("keyup", event => {
-  if (event.keyCode === 13) {
-    // Cancel the default action, if needed
-    event.preventDefault();
-    // Trigger the button element with a click
-    button.click();
+  const button = document.getElementById("send-button");
+  const text = document.getElementById("send-text");
+  const chat = document.getElementById("chat");
+  const patient_id = document.getElementById("hidden-bot").value
+
+  function addMyChat(msg) {
+    const message = `<div class="chat-container darker">
+    <img src="/static/img/index.jpeg" alt="Avatar" class="right">
+    <p>${msg}</p>
+    <span class="time-left">11:01</span>
+    </div>`
+    chat.innerHTML += message;
   }
+
+  function addBotChat(msg) {
+    const message = `<div class="chat-container">
+      <img src="/static/img/index.jpeg" alt="Avatar">
+      <p>${msg}</p>
+      <span class="time-right">11:00</span>
+    </div>`
+    chat.innerHTML += message;
+  }
+
+  async function postData(url = '', data = {}) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, *cors, same-origin
+      credentials: 'same-origin', // include, *same-origin, omit
+      headers: {
+        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      redirect: 'follow', // manual, *follow, error
+      body: JSON.stringify(data) // body data type must match "Content-Type" header
+    });
+    return await response.json(); // parses JSON response into native JavaScript objects
+  }
+
+
+  text.addEventListener("keyup", event => {
+    if (event.keyCode === 13) {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      button.click();
+    }
   })
-  button.addEventListener("click",async ()=>{
+  button.addEventListener("click", async () => {
     let msg = text.value;
     addMyChat(msg);
-    const resp = await postData("/chat", {patient: id, username: "{{username}}", password:"{{password}}", message:msg })
+    const resp = await postData("/chat", { patient_id: "{{ patient.id }}", message: msg })
     addBotChat(resp.message);
     text.value = "";
   });
-    
+
 </script>
-    
+
 {% endblock %}

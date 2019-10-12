@@ -6,6 +6,8 @@ services:
     environment:
       PYTHONUNBUFFERED: 'true'
       PORT: 80
+      QA_SVCE_HOST: 'localhost'
+      QA_SVCE_PORT: 81
       STRIPE_SECRET_KEY: ''
       STRIPE_PUBLISHABLE_KEY: ''
     volumes:
