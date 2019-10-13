@@ -1,5 +1,5 @@
 # BetterDoctor
-## Simualted Patient Chatbot
+## Simulated Patient Chatbot
 
 The application simulates patient and doctor interaction by simulating patients with chat bots. 
 
