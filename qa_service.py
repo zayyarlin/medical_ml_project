@@ -3,9 +3,9 @@ import json
 
 from drqa.reader import Predictor
 
-
 app = Flask(__name__)
 
+# Initiates the DrQA predictor using Spacy tokenizer
 predictor = Predictor(None, "spacy", num_workers=0,
                       normalize=False)
 
@@ -30,4 +30,4 @@ def qa_service():
 
 # ======== Main ============================================================== #
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=True, port=81, host='0.0.0.0')
+    app.run(debug=True, use_reloader=True, port=8080, host='0.0.0.0')

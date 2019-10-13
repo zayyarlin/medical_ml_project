@@ -1,126 +1,68 @@
 {% extends "base.html" %}
 {% block body %}
 {% include "navbar.html" %}
-<style>
-  /* Chat containers */
-  .chat-container {
-    border: 2px solid #dedede;
-    background-color: #f1f1f1;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 10px 0;
-  }
-
-  /* Darker chat container */
-  .darker {
-    border-color: cyan;
-    background-color: cyan;
-  }
-
-  /* Clear floats */
-  .chat-container::after {
-    content: "";
-    clear: both;
-    display: table;
-  }
-
-  /* Style images */
-  .chat-container img {
-    float: left;
-    max-width: 60px;
-    width: 100%;
-    margin-right: 20px;
-    border-radius: 50%;
-  }
-
-  /* Style the right image */
-  .container img.right {
-    float: right;
-    margin-left: 20px;
-    margin-right: 0;
-  }
-
-  /* Style time text */
-  .time-right {
-    float: right;
-    color: #aaa;
-  }
-
-  /* Style time text */
-  .time-left {
-    float: left;
-    color: #999;
-  }
-
-  .chat-bubble {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .input-chat {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  .input-text {
-    width: 80%;
-  }
-
-  .bottombar {
-    margin-top: 5%;
-    height: 20%;
-    background-color: #aaa;
-    text-align: center;
-  }
-</style>
 <div class="container">
-  <h1 class="title">You are chatting with {{ patient.name }}</h1>
-  <div class="chat-bubble" id="chat">
-    <div class="chat-container">
-      <img src="/static/img/index.jpeg" alt="Avatar">
-      <p>Hello. How are you today?</p>
-      <span class="time-right">11:00</span>
+  
+  <article class="message intro-msg">
+    <div class="message-header">
+      <p>You are chatting with {{ patient.name }}</p>
+      <button class="delete" aria-label="delete"></button>
     </div>
-    <div class="chat-container darker">
-      <img src="/static/img/index.jpeg" alt="Avatar" class="right">
-      <p>Hey! I'm fine. Thanks for asking!</p>
-      <span class="time-left">11:01</span>
+    <div class="message-body">
+      {{patient.intro}}
+    </div>
+  </article>
+
+  <article class="message intro-msg">
+      <div class="message-header">
+        <p>Case File (The chat bot will extract information from this case file)</p>
+        <button class="" aria-label="" id="show-case">Show/Hide</button>
+      </div>
+      <div class="message-body" id="case" style="display: none;">
+        {{patient.case}}
+      </div>
+    </article>
+
+  <div class="chat-area" id="chat">
+  </div>
+
+  <div class="field has-addons" style="margin-bottom: 20px;">
+    <div class="control">
+      <input class="input is-primary" type="text" id="send-text" placeholder="Ask a question">
+      <input type="hidden" id="hidden-bot" value="{{ patient.id }}">
+    </div>
+    <div class="control">
+      <button id="send-button" class="button">Ask</button>
+    </div>
+    <div class="control">
+      <a href="/" class = "button is-danger">Go back</a>
     </div>
   </div>
-  <div class="input-chat">
-    <input type="text" class="input-text" id="send-text">
-    <input type="hidden" id="hidden-bot" value="{{ patient.id }}">
-    <button id="send-button" class="button">send</button>
-  </div>
-  <div class="button">
-    <a href="/">back</a>
-  </div>
+
 </div>
 {% endblock %}
+
 {% block scripts %}
 <script>
+
   const button = document.getElementById("send-button");
+  const showcasebtn = document.getElementById("show-case");
   const text = document.getElementById("send-text");
   const chat = document.getElementById("chat");
   const patient_id = document.getElementById("hidden-bot").value
 
   function addMyChat(msg) {
-    const message = `<div class="chat-container darker">
-    <img src="/static/img/index.jpeg" alt="Avatar" class="right">
-    <p>${msg}</p>
-    <span class="time-left">11:01</span>
+    const message = `<div class="chat-msg">
+      <img src="/static/img/index.jpeg" alt="Avatar" class="right" style="width:50px; margin-right:5px; float: left">
+      <p ">${msg}</p>
     </div>`
     chat.innerHTML += message;
   }
 
   function addBotChat(msg) {
-    const message = `<div class="chat-container">
-      <img src="/static/img/index.jpeg" alt="Avatar">
-      <p>${msg}</p>
-      <span class="time-right">11:00</span>
+    const message = `<div class="chat-msg-bot">
+      <img src="/static/img/robot.png" alt="Avatar" class="right" style="width:50px;  margin-right:5px; float: left">
+      <p ">${msg}</p>
     </div>`
     chat.innerHTML += message;
   }
@@ -150,12 +92,22 @@
       button.click();
     }
   })
+  
   button.addEventListener("click", async () => {
     let msg = text.value;
     addMyChat(msg);
     const resp = await postData("/chat", { patient_id: "{{ patient.id }}", message: msg })
     addBotChat(resp.message);
     text.value = "";
+  });
+
+  showcasebtn.addEventListener("click", async () => {
+    var x = document.getElementById("case");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
   });
 
 </script>

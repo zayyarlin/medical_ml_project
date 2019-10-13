@@ -54,33 +54,37 @@
   margin-bottom: 20px;
 }
 
-/* 
-.bot-list {
-  display: flex;
-  flex-direction: column;
-  width: 75%;
-  margin: 2%;
-  padding: 1%;
-}
-.left-right{
-  display: flex;
-  align-content: center;
-  justify-content: center;
+.chat-area {
+  padding: 20px;
+  height: 380px;
+  margin-bottom: 20px;
+  background-color: gray;
+  overflow: auto;
 }
 
-.bot-card {
-  background-color: #0f7;
-  flex: 1;
-  text-align: center;
-  font-size: 2rem;
-  margin: 1%;
+.chat-msg {
+  border-style: solid;
+  background-color: white;
+  border-radius: 15px;
+  border-width: thin;
+  border-color: lightblue;
+  padding: 5px;
+  margin-bottom: 5px;
+  min-height: 60px;
 }
-.custom-rows {
-  display: flex;
-  flex: 1;
+
+.chat-msg-bot {
+  border-style: solid;
+  background-color: white;
+  border-radius: 15px;
+  border-width: thin;
+  border-color: lightcoral;
+  padding: 5px;
+  margin-bottom: 5px;
+  min-height: 60px;
 }
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-} */
+
+.intro-msg {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
